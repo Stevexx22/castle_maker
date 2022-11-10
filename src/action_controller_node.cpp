@@ -24,8 +24,8 @@ const std::string cyan("\033[0;36m");
 const std::string magenta("\033[0;35m");
 std::vector<std::string> piece;
 std::string color[4];
-std::string color1a, color2a, color3a, color4a, firstgoal, secondgoal, thirdgoal, fourthgoal;
-int y=0,r=0,b=0,f=0,p=20,pc=0,rc=0,bc=0,yc=0,id=6,i=1;
+std::string color1a, color2a, color3a, color4a, firstgoal, secondgoal, thirdgoal, fourthgoal,fifthgoal,sixthgoal,seventhgoal,eighthgoal;
+int y=0,r=0,b=0,f=0,p=20,pc=0,rc=0,bc=0,yc=0,id=6,count=1;
 class planningModule : public rclcpp::Node
 {
 public:
@@ -43,29 +43,29 @@ public:
    {
     ++pc;  
     piece.push_back(("parallelepiped"+ std::to_string(pc)));
-    std::cout<<reset<<i<<".Parallelepipedo"<<std::endl;
-    ++i;
+    std::cout<<reset<<count<<".Parallelepipedo"<<std::endl;
+    ++count;
    }
    else if ((id == 1))
    {
     ++rc;
     piece.push_back(("redcube"+std::to_string(rc)));
-    std::cout<<reset<<i<<".Cubo rosso"<<std::endl;
-    ++i;
+    std::cout<<reset<<count<<".Cubo rosso"<<std::endl;
+    ++count;
    }    
    else if ((id == 2))
    {
     ++bc;
     piece.push_back(("bluecube"+std::to_string(bc)));
-    std::cout<<reset<<i<<".Cubo blu"<<std::endl;
-    ++i;
+    std::cout<<reset<<count<<".Cubo blu"<<std::endl;
+    ++count;
    }    
    else if ((id == 3))
    {
     ++yc;
     piece.push_back(("yellowcube"+std::to_string(yc)));
-    std::cout<<reset<<i<<".Cubo giallo"<<std::endl;
-    ++i;
+    std::cout<<reset<<count<<".Cubo giallo"<<std::endl;
+    ++count;
    }    
   }
 //inizializzazione del nodo
@@ -84,20 +84,24 @@ public:
 //metodo per aggiungere le istanze con i dati letti dal modulo di visione
   void addInstances()
   { 
-    for (int i=0; i<piece.size();i++){
+    for (int i=0; i<piece.size();i++)
+    {
       problem_expert_->addInstance(plansys2::Instance{piece[i], "object"});
-      if((piece[i].find("parallelepiped") != std::string::npos)){
+      if((piece[i].find("parallelepiped") != std::string::npos))
+      {
         p++;
         problem_expert_->addInstance(plansys2::Instance{"position" + std::to_string(p)+"","location"});
       }
-      else {
+      else 
+      {
         ++f;
         problem_expert_->addInstance(plansys2::Instance{"position" + std::to_string(f)+"","location"});
       }
     }
     p=20;
     f=0;
-    for (int i=1; i<9;i++){ 
+    for (int i=1; i<9;i++)
+    { 
       problem_expert_->addInstance(plansys2::Instance{"destination" + std::to_string(i)+"","location"});
     }
     problem_expert_->addInstance(plansys2::Instance{"gripper", "robot"});
@@ -148,21 +152,26 @@ public:
     problem_expert_->addInstance(plansys2::Instance{"gripper", "robot"});
   }
 //metodo per aggiungere i predicati con i dati letti dal modulo di visione
-  void addPredicates(){
+  void addPredicates()
+  {
     for (int i=0; i<piece.size();i++){      
       problem_expert_->addPredicate(plansys2::Predicate("(ontable " + piece[i] + ")"));
       problem_expert_->addPredicate(plansys2::Predicate("(clear " + piece[i] + ")"));
-      if((piece[i].find("parallelepiped") != std::string::npos)){
+      if((piece[i].find("parallelepiped") != std::string::npos))
+      {
         ++p;
         problem_expert_->addPredicate(plansys2::Predicate("(at " + piece[i] + " position" + std::to_string(p) + ")"));
       }
-      else {
+      else 
+      {
         ++f;
         problem_expert_->addPredicate(plansys2::Predicate("(at " + piece[i] + " position" + std::to_string(f) + ")"));
       }
     }
       problem_expert_->addPredicate(plansys2::Predicate("(emptyhand gripper)"));
-      problem_expert_->addPredicate(plansys2::Predicate("(notbusy gripper)"));}
+      problem_expert_->addPredicate(plansys2::Predicate("(notbusy gripper)"));
+  }
+
 //metodo per aggiungere in automatico i predicati del problema (utilizzabile per effettuare delle prove)
   void addSimulatedPredicates(){
     problem_expert_->addPredicate(plansys2::Predicate("(ontable yellowcube1)"));
@@ -216,6 +225,7 @@ public:
     problem_expert_->addPredicate(plansys2::Predicate("(emptyhand gripper)"));
     problem_expert_->addPredicate(plansys2::Predicate("(notbusy gripper)"));
   }
+
   //creazione dei topic per trasmettere le posizioni al modulo di movimento
   void initializegeometrytopic(){ 
     publisher1_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("/points/pickup", 10);
@@ -235,44 +245,86 @@ public:
     publisher2_->publish(message);
     publisher3_->publish(message);
 
-}
+  }
   void step()
   {
     switch (state_) {
       case STARTING:
         {
-          // Settaggio dell'obiettivo
-          problem_expert_->setGoal(plansys2::Goal("(and "+ firstgoal+secondgoal+thirdgoal+fourthgoal+" (ontable parallelepiped1) (at parallelepiped1 destination5)(ontable parallelepiped2) (at parallelepiped2 destination6)(ontable parallelepiped3) (at parallelepiped3 destination7)(ontable parallelepiped4) (at parallelepiped4 destination8))"));
+
+          // Settaggio dei cubi che compongono la base delle colonne come obiettivo
+          problem_expert_->setGoal(plansys2::Goal("(and "+ firstgoal+secondgoal+thirdgoal+fourthgoal+")"));
+
           // Calcolo del piano
           auto domain = domain_expert_->getDomain();
           auto problem = problem_expert_->getProblem();
           auto plan = planner_client_->getPlan(domain, problem);
-          if (!plan.has_value()) {
-            std::cout << "Could not find plan to reach goal " <<
-              parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
+          if (!plan.has_value()) 
+          {
+            std::cout << "Non è stato possibile elaborare un piano " <<
+            parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
             break;
           }
+
           // Esecuzione del piano
-          if (executor_client_->start_plan_execution(plan.value())) {
+          if (executor_client_->start_plan_execution(plan.value())) 
+          {
             state_ = MOVING;
           }
         }
         break;
-    case MOVING:
+      case MOVING:
+      { 
+          auto feedback = executor_client_->getFeedBack();                    
+          if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) 
+          {
+            if (executor_client_->getResult().value().success) 
+            {
+              std::cout << "Cubi alla base delle colonne posizionati" << std::endl;
+
+              // Settaggio dei cubi che compongono il livello superiore e dei parallelepipedi come obiettivo
+              problem_expert_->setGoal(plansys2::Goal("(and "+ fifthgoal+sixthgoal+seventhgoal+eighthgoal+" (ontable parallelepiped1) (at parallelepiped1 destination5)(ontable parallelepiped2) (at parallelepiped2 destination6)(ontable parallelepiped3) (at parallelepiped3 destination7)(ontable parallelepiped4) (at parallelepiped4 destination8))"));
+
+              //Calcolo del piano
+              auto domain = domain_expert_->getDomain();
+              auto problem = problem_expert_->getProblem();
+              auto plan = planner_client_->getPlan(domain, problem);
+
+              if (!plan.has_value()) 
+              {
+                std::cout << "Non è stato possibile elaborare un piano" <<
+                parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
+                break;
+              }
+
+              // Esecuzione del piano
+              if (executor_client_->start_plan_execution(plan.value())) 
+              {
+                state_ = ENDING;
+              }
+            }
+          }
+        }
+        break;
+    case ENDING:
         {
           auto feedback = executor_client_->getFeedBack();
-          if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) {
-            if (executor_client_->getResult().value().success) {
-              std::cout << "Successful finished " << std::endl;
-            }}}
-            break;      
-            default:
+          if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) 
+          {
+            if (executor_client_->getResult().value().success) 
+            {
+              std::cout << "Castello costruito!" << std::endl;
+            }
+          }
+        }
+        break;      
+         default:
         break;
     }
   }
 
 private:
-  typedef enum {STARTING, MOVING} StateType;
+  typedef enum {STARTING, MOVING,ENDING} StateType;
   StateType state_;
   std::shared_ptr<plansys2::DomainExpertClient> domain_expert_;
   std::shared_ptr<plansys2::PlannerClient> planner_client_;
@@ -345,15 +397,18 @@ void castle_choice (){
       std::cin>>color[k];
       if (color[k]=="giallo"){
         color1a=("\033[1;33m");
-        firstgoal="(on yellowcube"+ std::to_string(y+=2)+" yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination1)";
+        firstgoal="(ontable yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination1)";
+        fifthgoal="(on yellowcube"+ std::to_string(y+=2)+" yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination1)";
       }
       else if (color[k]=="rosso"){
         color1a=("\033[0;31m");
-        firstgoal="(on redcube"+ std::to_string(r+=2)+" redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination1)";
+        firstgoal="(ontable redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(y+1)+" destination1)";
+        fifthgoal="(on redcube"+ std::to_string(r+=2)+" redcube"+ std::to_string(y+1)+") (at redcube"+std::to_string(r+1)+" destination1)";
       }
       else if (color[k]=="blu"){
         color1a=("\033[0;36m");
-        firstgoal="(on bluecube"+ std::to_string(b+=2)+" bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination1)";
+        firstgoal="(ontable bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(y+1)+" destination1)";
+        fifthgoal="(on bluecube"+ std::to_string(b+=2)+" bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination1)";
       }
       else{
         std::cout<<red<<"Errore, è stato inserito un colore non disponibile"<<std::endl;
@@ -364,15 +419,18 @@ void castle_choice (){
       std::cin>>color[k];
       if (color[k]=="giallo"){
         color2a=("\033[1;33m");
-        secondgoal="(on yellowcube"+ std::to_string(y+=2)+" yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination2)";
+        secondgoal="(ontable yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination2)";
+        sixthgoal="(on yellowcube"+ std::to_string(y+=2)+" yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination2)";
       }
       else if (color[k]=="rosso"){
         color2a=("\033[0;31m");
-        secondgoal="(on redcube"+ std::to_string(r+=2)+" redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination2)";
+        secondgoal="(ontable redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination2)";
+        sixthgoal="(on redcube"+ std::to_string(r+=2)+" redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination2)";      
       }
       else if (color[k]=="blu"){
         color2a=("\033[0;36m");
-        secondgoal="(on bluecube"+ std::to_string(b+=2)+" bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination2)";
+        secondgoal="(ontable bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination2)";
+        sixthgoal="(on bluecube"+ std::to_string(b+=2)+" bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination2)";
       }
       else{
         std::cout<<red<<"Errore, è stato inserito un colore non disponibile"<<std::endl;
@@ -383,15 +441,18 @@ void castle_choice (){
       std::cin>>color[k]; 
       if (color[k]=="giallo"){
         color3a=("\033[1;33m");
-        thirdgoal="(on yellowcube"+ std::to_string(y+=2)+" yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination3)";
+        thirdgoal="(ontable yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination3)";
+        seventhgoal="(on yellowcube"+ std::to_string(y+=2)+" yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination3)";
       }
       else if (color[k]=="rosso"){
         color3a=("\033[0;31m");
-        thirdgoal="(on redcube"+ std::to_string(r+=2)+" redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination3)";
+        thirdgoal="(ontable redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination3)";
+        seventhgoal="(on redcube"+ std::to_string(r+=2)+" redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination3)";
       }
       else if (color[k]=="blu"){
         color3a=("\033[0;36m");
-        thirdgoal="(on bluecube"+ std::to_string(b+=2)+" bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination3)";
+        thirdgoal="(ontable bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination3)";
+        seventhgoal="(on bluecube"+ std::to_string(b+=2)+" bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination3)";
       }
       else{
         std::cout<<red<<"Errore, è stato inserito un colore non disponibile"<<std::endl;
@@ -402,15 +463,18 @@ void castle_choice (){
       std::cin>>color[k];  
       if (color[k]=="giallo"){
         color4a=("\033[1;33m");
-        fourthgoal="(on yellowcube"+ std::to_string(y+=2)+" yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination4)";
+        fourthgoal="(ontable yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination4)";
+        eighthgoal="(on yellowcube"+ std::to_string(y+=2)+" yellowcube"+ std::to_string(y+1)+") (at yellowcube"+std::to_string(y+1)+" destination4)";
       }
       else if (color[k]=="rosso"){
         color4a=("\033[0;31m");
-        fourthgoal="(on redcube"+ std::to_string(r+=2)+" redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination4)";
+        fourthgoal="(ontable redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination4)";
+        eighthgoal="(on redcube"+ std::to_string(r+=2)+" redcube"+ std::to_string(r+1)+") (at redcube"+std::to_string(r+1)+" destination4)";
       }
       else if (color[k]=="blu"){
         color4a=("\033[0;36m");
-        fourthgoal="(on bluecube"+ std::to_string(b+=2)+" bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination4)";
+        fourthgoal="(ontable bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination4)";
+        eighthgoal="(on bluecube"+ std::to_string(b+=2)+" bluecube"+ std::to_string(b+1)+") (at bluecube"+std::to_string(b+1)+" destination4)";
       }
       else{
         std::cout<<red<<"Errore, è stato inserito un colore non disponibile"<<std::endl;
