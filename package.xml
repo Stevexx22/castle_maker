@@ -4,7 +4,7 @@
   <name>castle_maker</name>
   <version>0.0.4</version>
 
-  <description>Package for the construction of a castle with wood pieces</description>
+  <description>Package to elaborate and execute the plan to build a mini-castle, made of wooden bricks, with an UR5e Robot.</description>
 
   <maintainer email="stefano.pavan.22@gmail.com">Stefano Pavan</maintainer>
 
