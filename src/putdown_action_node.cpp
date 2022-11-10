@@ -26,9 +26,9 @@ public:
     geometry_msgs::msg::PoseStamped p;
     p.header.frame_id = "map";
     p.header.stamp = now();
-    p.pose.position.x = -0.405;
+    p.pose.position.x = -0.4025;
     p.pose.position.y = 0.06;
-    p.pose.position.z = 1.02;
+    p.pose.position.z = 1.025;
     p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
@@ -37,65 +37,65 @@ public:
 
     p.pose.position.x = -0.48;
     p.pose.position.y = 0.06;
-    p.pose.position.z = 1.02;
+    p.pose.position.z = 1.025;
     p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
+    p.pose.orientation.w = 0.0;
     waypoints_["destination2"] = p;
 
     p.pose.position.x = -0.48;
-    p.pose.position.y = 0.135;
-    p.pose.position.z = 1.02;
+    p.pose.position.y = 0.1375;
+    p.pose.position.z = 1.025;
     p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
+    p.pose.orientation.w = 0.0;
     waypoints_["destination3"] = p;
 
-    p.pose.position.x = -0.405;
-    p.pose.position.y = 0.135;
-    p.pose.position.z = 1.02;
+    p.pose.position.x = -0.4025;
+    p.pose.position.y = 0.1375;
+    p.pose.position.z = 1.025;
     p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
+    p.pose.orientation.w = 0.0;
     waypoints_["destination4"] = p;
-    
-    p.pose.position.x = -0.4425;
+
+    p.pose.position.x = -0.44125;
     p.pose.position.y = 0.06;
-    p.pose.position.z = 1.02;
-    p.pose.orientation.x = -1.0;
-    p.pose.orientation.y = 0.0;
+    p.pose.position.z = 1.025;
+    p.pose.orientation.x = -0.7;
+    p.pose.orientation.y = -0.7;
     p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
+    p.pose.orientation.w = 0.0;
     waypoints_["destination5"] = p;
-    
+
     p.pose.position.x = -0.48;
-    p.pose.position.y = 0.0975;
-    p.pose.position.z = 1.02;
-    p.pose.orientation.x = 1.0;
-    p.pose.orientation.y = 0.0;
-    p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
-    waypoints_["destination6"] = p;
-    
-    p.pose.position.x = -0.4425;
-    p.pose.position.y = 0.135;
-    p.pose.position.z = 1.02;
+    p.pose.position.y = 0.09875;
+    p.pose.position.z = 1.025;
     p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
+    p.pose.orientation.w = 0.0;
+    waypoints_["destination6"] = p;
+
+    p.pose.position.x = -0.44125;
+    p.pose.position.y = 0.1375;
+    p.pose.position.z = 1.025;
+    p.pose.orientation.x = -0.7;
+    p.pose.orientation.y = -0.7;
+    p.pose.orientation.z = 0.0;
+    p.pose.orientation.w = 0.0;
     waypoints_["destination7"] = p;
-    
-    p.pose.position.x = -0.405;
-    p.pose.position.y = 0.0975;
-    p.pose.position.z = 1.02;
-    p.pose.orientation.x = 1.0;
+
+    p.pose.position.x = -0.4025;
+    p.pose.position.y = 0.09875;
+    p.pose.position.z = 1.025;
+    p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
+    p.pose.orientation.w = 0.0;
     waypoints_["destination8"] = p;
     //subscription al topic in cui il nodo del movimento pubblica l'avvenuto movimento    
     using namespace std::placeholders;

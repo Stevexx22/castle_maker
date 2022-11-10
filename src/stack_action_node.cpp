@@ -26,9 +26,9 @@ public:
     geometry_msgs::msg::PoseStamped p;
     p.header.frame_id = "map";
     p.header.stamp = now();
-    p.pose.position.x = -0.405;
+    p.pose.position.x = -0.4025;
     p.pose.position.y = 0.06;
-    p.pose.position.z = 1.07;
+    p.pose.position.z = 1.05;
     p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
@@ -37,31 +37,30 @@ public:
 
     p.pose.position.x = -0.48;
     p.pose.position.y = 0.06;
-    p.pose.position.z = 1.07;
+    p.pose.position.z = 1.05;
     p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
+    p.pose.orientation.w = 0.0;
     waypoints_["destination2"] = p;
 
     p.pose.position.x = -0.48;
-    p.pose.position.y = 0.135;
-    p.pose.position.z = 1.07;
+    p.pose.position.y = 0.1375;
+    p.pose.position.z = 1.05;
     p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
+    p.pose.orientation.w = 0.0;
     waypoints_["destination3"] = p;
 
-    p.pose.position.x = -0.405;
-    p.pose.position.y = 0.135;
-    p.pose.position.z = 1.07;
+    p.pose.position.x = -0.4025;
+    p.pose.position.y = 0.1375;
+    p.pose.position.z = 1.05;
     p.pose.orientation.x = -1.0;
     p.pose.orientation.y = 0.0;
     p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.0;    
+    p.pose.orientation.w = 0.0;
     waypoints_["destination4"] = p;
-    
 
     //subscription al topic in cui il nodo del movimento pubblica l'avvenuto movimento
     using namespace std::placeholders;
