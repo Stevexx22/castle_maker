@@ -45,7 +45,7 @@ $ ros2 topic pub /visionModuleid std_msgs/String '{data: 4}'
 
 Then, the package calculates the plan and executes it, sending the position messages, one after the other, to the motion module.
 
-After each action the package waits for a response from the motion module, **to simulate it**### PREREQUISITES::
+After each action the package waits for a response from the motion module, **to simulate it**:
 ```
 $ ros2 topic pub /confirmation_topic std_msgs/String '{data: NOT BUSY }'
 ```
