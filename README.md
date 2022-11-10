@@ -1,41 +1,52 @@
 # castle_maker
-PREREQUISITES:
-	-ROS2 foxy
-	-PlanSys2 package
-	-Popf
-  -motion module (or simulating the message flow)
-  -vision module  (or simulating the message flow)
-  -bridge communication between ros1 and ros2 (if using motion module and vision module)
+This package elaborates and executes the plan to build a mini-castle, made of wooden bricks, with an UR5e Robot.
+### PREREQUISITES:
+* `ROS2 foxy`
+* `PlanSys2 package`
+* `Popf`
+* `Motion module` (or simulate the message flow)
+* `Vision module`  (or simulate the message flow)
+* `Communication bridge between ros1 and ros2` (needed if you are using motion module and vision module)
  
- INSTRUCTIONS:
+### INSTRUCTIONS:
 
 To launch this package write on one terminal window:
-
+```
 $ ros2 launch castle_maker castle_maker_launch.py
-
+```
 On another terminal window write:
-
+```
 $ ros2 run castle_maker action_controller_node
+```
+After having chosen the layout of the building, the program reads messages from the vision module. 
 
-Now, choose the layout of the building writing the colour of each column;
+**If that module is not available on your machine, simulate it on a new terminal window:**
 
-After that, the program reads the messages from the vision module.
-If not available on your machine, simulate them on a new terminal window:
-
--To add one parallelepiped:
+* To add one parallelepiped:
+```
 $ ros2 topic pub /visionModuleid std_msgs/String '{data: 0}'
--To add one red cube:
+```
+* To add one red cube:
+```
 $ ros2 topic pub /visionModuleid std_msgs/String '{data: 1}'
--To add one blue cube:
+```
+* To add one blue cube:
+```
 $ ros2 topic pub /visionModuleid std_msgs/String '{data: 2}'
--To add one yellow cube:
+```
+* To add one yellow cube:
+```
 $ ros2 topic pub /visionModuleid std_msgs/String '{data: 3}'
--To finish the adding procedure
+```
+* To finish the adding blocks procedure:
+```
 $ ros2 topic pub /visionModuleid std_msgs/String '{data: 4}'
+```
 
-Then, the package calculates the plan and executes it sending the position messages, one after the other, to the motion module.
-After each action the package waits for a response from the motion module, to simulate it:
+Then, the package calculates the plan and executes it, sending the position messages, one after the other, to the motion module.
 
+After each action the package waits for a response from the motion module, **to simulate it**### PREREQUISITES::
+```
 $ ros2 topic pub /confirmation_topic std_msgs/String '{data: NOT BUSY }'
-
+```
 After all actions have been performed correctly, the program ends.
